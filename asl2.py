@@ -42,7 +42,7 @@ while True:
                     p_this.append(float(lm.y))
                     p_this.append(float(lm.z))
 
-                print(p_this)
+                #print(p_this)
 
                 p_this = np.array(p_this).reshape(1, 63)
 
