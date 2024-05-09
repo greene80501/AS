@@ -2,6 +2,15 @@ import cv2
 import mediapipe as mp
 import math
 import time
+import tensorflow as tf
+import os
+import numpy as np
+
+# Provide the path to the directory where the model is saved
+model_path = os.curdir + "/asl_model.keras"
+
+# Load the saved model
+loaded_model = tf.keras.models.load_model(model_path)
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 600)
@@ -24,8 +33,22 @@ while True:
         result = hand.process(RGB_frame)
         if result.multi_hand_landmarks:
             for hand_landmarks in result.multi_hand_landmarks:
+                p_this = []
                 for id, lm in enumerate(hand_landmarks.landmark):
-                    print(id,lm)
+                    p_this.append(float(lm.x))
+                    p_this.append(float(lm.y))
+                    p_this.append(float(lm.z))
+
+                p_this = np.array(p_this).reshape(1, 63)
+
+                #print(p_this)
+                #exit()
+
+                prediction = loaded_model.predict(p_this)
+                index = np.argmax(result)
+
+                #print(index)
+                print(chr(index+65))
                 # Draw landmark
                 mp_drawig.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
