@@ -7,6 +7,8 @@ import os
 import numpy as np
 import predict
 
+tf.keras.utils.disable_interactive_logging()
+
 # Provide the path to the directory where the model is saved
 model_path = os.curdir + "/asl_model.keras"
 
