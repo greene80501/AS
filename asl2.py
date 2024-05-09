@@ -5,6 +5,7 @@ import time
 import tensorflow as tf
 import os
 import numpy as np
+import predict
 
 # Provide the path to the directory where the model is saved
 model_path = os.curdir + "/asl_model.keras"
@@ -25,6 +26,8 @@ start = time.time()  # Set start
 
 end = 1
 
+predicted_letter = None
+
 while True:
 
     success, frame = cap.read()
@@ -33,22 +36,22 @@ while True:
         result = hand.process(RGB_frame)
         if result.multi_hand_landmarks:
             for hand_landmarks in result.multi_hand_landmarks:
-                p_this = []
+                p_this = list()
                 for id, lm in enumerate(hand_landmarks.landmark):
                     p_this.append(float(lm.x))
                     p_this.append(float(lm.y))
                     p_this.append(float(lm.z))
+
+                print(p_this)
 
                 p_this = np.array(p_this).reshape(1, 63)
 
                 #print(p_this)
                 #exit()
 
-                prediction = loaded_model.predict(p_this)
-                index = np.argmax(result)
+                predicted_letter = predict._predict(p_this, loaded_model)
 
                 #print(index)
-                print(chr(index+65))
                 # Draw landmark
                 mp_drawig.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
@@ -60,10 +63,12 @@ while True:
 
 
         # Display FPS
-        cv2.putText(frame, f'FPS: {fps}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(frame, f'FPS: {fps}; Predicted letter: {predicted_letter}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         cv2.imshow("capture image", frame)
         if cv2.waitKey(1) == ord('q'):
             break
+
+        predicted_letter = None
 
 cv2.destroyAllWindows()
 

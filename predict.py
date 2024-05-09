@@ -1,20 +1,27 @@
 import tensorflow as tf
-import os
+import os, sys
 import numpy as np
 
-# Provide the path to the directory where the model is saved
-model_path = os.curdir + "/asl_model.keras"
+def _predict(p_this, loaded_model):
+    # This predicts some random values I plucked out of the Q O and V's csvs
+    prediction = loaded_model.predict(p_this)
+    preds = []
+    for result in prediction:
+        index = np.argmax(result)
 
-# Load the saved model
-loaded_model = tf.keras.models.load_model(model_path)
+        #print(index)
+        preds.append(chr(index+65))
 
-p_this = np.array([0.5690282583236694, 0.9800297021865845, 5.867958066119172e-07, 0.6358188390731812, 0.9314838647842407, -0.04867679253220558, 0.6691291332244873, 0.8316982388496399, -0.06713779270648956, 0.6173446774482727, 0.7650396227836609, -0.07956258207559586, 0.5513145327568054, 0.7706865072250366, -0.09347075968980789, 0.6251146197319031, 0.6835854053497314, -0.041888222098350525, 0.6232461333274841, 0.5514363050460815, -0.0640169307589531, 0.6147376894950867, 0.47380921244621277, -0.08515756577253342, 0.6050413250923157, 0.40625089406967163, -0.10170713812112808, 0.5716550946235657, 0.6766974329948425, -0.03692633658647537, 0.56906658411026, 0.5357896089553833, -0.053729522973299026, 0.5652616024017334, 0.44431203603744507, -0.07633179426193237, 0.5614691376686096, 0.3695939779281616, -0.09376838058233261, 0.5266522765159607, 0.6995278596878052, -0.03647127375006676, 0.5208079814910889, 0.5663758516311646, -0.053341396152973175, 0.5201258063316345, 0.48511773347854614, -0.07511037588119507, 0.5188462734222412, 0.41681236028671265, -0.09034162014722824, 0.48327261209487915, 0.7458173036575317, -0.04045352339744568, 0.47600308060646057, 0.6406372785568237, -0.056151751428842545, 0.4755125939846039, 0.5780473947525024, -0.06531411409378052, 0.4751873016357422, 0.5227152109146118, -0.0720689445734024]).reshape(1, 63)
-#p_this.reshape(1, 63)
+    return preds
 
-# This predicts some random values I plucked out of the Q O and V's csvs
-prediction = loaded_model.predict(p_this)
-for result in prediction:
-    index = np.argmax(result)
+if __name__ == "__main__":
+    # Provide the path to the directory where the model is saved
+    model_path = os.curdir + "/asl_model.keras"
 
-    #print(index)
-    print(chr(index+65))
+    # Load the saved model
+    loaded_model = tf.keras.models.load_model(model_path)
+
+    p_this = np.array(sys.argv[1]).reshape(1, 63)
+    #p_this.reshape(1, 63)
+
+    print(_predict(p_this, loaded_model))
