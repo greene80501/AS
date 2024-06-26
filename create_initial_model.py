@@ -12,15 +12,19 @@ read_s = time.time()
 
 print("Reading letter data")
 
-for letter_file in os.listdir("Corrected_CSV_Data"):
-    with open("Corrected_CSV_Data/" + letter_file, 'r') as f:
+for letter_file in os.listdir("multiframe_csv_data"):
+    with open("multiframe_csv_data/" + letter_file, 'r') as f:
         content = f.read()
         content = content.split('\n')
         #y.append([])
         for i,line in enumerate(content):
             if line != '' and line[0] != 'x':
                 dats = line.split(',')
-                print(len(dats))
+                dats.pop()
+                print(letter_file+f' ({i}) {len(dats)==63*24}')
+                if len(dats) != 63*24:
+                    print(f"Shape wrong: {len(dats)} ({63*24})")
+                    exit(1)
 
                 for i,dat in enumerate(dats):
                     if dat != '':
@@ -45,7 +49,7 @@ num_classes = len(set(y))
 y_encoded = tf.keras.utils.to_categorical(y, num_classes=num_classes)
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Dense(10, input_shape=(63,), activation='linear'),  # Ten dense layers with linear activation
+    tf.keras.layers.Dense(10, input_shape=(63*24,), activation='linear'),  # Ten dense layers with linear activation
     tf.keras.layers.Dense(num_classes, activation='softmax')
 ])
 """for i in range(0, 10):
