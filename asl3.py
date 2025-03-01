@@ -10,7 +10,7 @@ import predict
 tf.keras.utils.disable_interactive_logging()
 
 # Provide the path to the directory where the model is saved
-model_path = os.curdir + "/asl_model.keras"
+model_path = os.curdir + "/asl_model_Test.keras"
 
 # Load the saved model
 loaded_model = tf.keras.models.load_model(model_path)
